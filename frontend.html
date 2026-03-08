@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destini Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        nav a:hover {
+            opacity: 0.8;
+        }
+
+        .auth-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .auth-button {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .auth-button:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Auth Modal */
+        .auth-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 400;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .auth-modal.active {
+            display: flex;
+        }
+
+        .auth-modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 450px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .auth-modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .auth-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .auth-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: #f9f9f9;
+        }
+
+        .auth-tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .auth-tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: white;
+        }
+
+        .auth-forms {
+            padding: 2rem;
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .auth-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .auth-form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .auth-form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .auth-form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .auth-submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .auth-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .auth-error {
+            background: #ffebee;
+            color: #c62828;
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .auth-error.active {
+            display: block;
+        }
+
+        .auth-success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .auth-success.active {
+            display: block;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            min-height: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1920') center/cover;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        .search-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 1rem;
+            background: rgba(255,255,255,0.95);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            align-self: flex-end;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading p {
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Recommendations */
+        .recommendations {
+            padding: 4rem 0;
+            background: #f9f9f9;
+            min-height: 400px;
+            display: none;
+        }
+
+        .recommendations.about-section,
+        #about.recommendations {
+            display: block;
+            background: #f5f5ff;
+        }
+
+        .about-highlight {
+            background: linear-gradient(135deg, rgba(102,126,234,0.12), rgba(118,75,162,0.18));
+            border: 1px solid rgba(102,126,234,0.2);
+            border-radius: 18px;
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 15px 45px rgba(103,126,234,0.15);
+        }
+
+        .about-highlight .about-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-weight: 600;
+            color: #5a4fdc;
+            background: rgba(255,255,255,0.8);
+            padding: 0.35rem 0.9rem;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 0.78rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-highlight h3 {
+            font-size: 1.85rem;
+            margin-bottom: 1rem;
+            color: #2d2c4c;
+        }
+
+        .about-highlight p {
+            font-size: 1.05rem;
+            line-height: 1.85;
+            color: #4c4c6d;
+            margin-bottom: 1rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 14px;
+            padding: 1.5rem;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.04);
+            text-align: left;
+        }
+
+        .stats-card h3 {
+            margin-bottom: 0.8rem;
+            color: #4b4aac;
+        }
+
+        .stats-card p {
+            color: #545479;
+            line-height: 1.6;
+        }
+
+        .recommendations.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #333;
+        }
+
+        .ml-info {
+            text-align: center;
+            background: #e3f2fd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        /* Place Card */
+        .place-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .place-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .ml-score-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .place-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #e0e0e0;
+        }
+
+        .place-info {
+            padding: 1.5rem;
+        }
+
+        .place-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .place-address {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .place-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .place-type {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 300;
+            overflow-y: auto;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+            background: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            z-index: 10;
+            border: none;
+        }
+
+        .close:hover {
+            background: #f0f0f0;
+        }
+
+        .modal-header {
+            position: relative;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        #placeImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .place-header-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            padding: 2rem;
+        }
+
+        .place-header-info h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            background: #f9f9f9;
+            border-bottom: 1px solid #e0e0e0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 1rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .tab-content {
+            padding: 2rem;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .tab-pane h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .feature-card {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .feature-card i {
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+
+        .realtime-panel {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .realtime-panel strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Floating Chatbot */
+        .chatbot-float {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .chatbot-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .chatbot-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .chatbot-popup {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            width: 380px;
+            height: 600px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 1001;
+            overflow: hidden;
+        }
+
+        .chatbot-popup.active {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chatbot-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background 0.3s;
+        }
+
+        .chatbot-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .chatbot-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #f9f9f9;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+        }
+
+        .bot-message {
+            justify-content: flex-start;
+        }
+
+        .user-message {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            background: white;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            max-width: 70%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 0.95rem;
+        }
+
+        .bot-message .message-content {
+            background: #e3f2fd;
+            color: #333;
+        }
+
+        .user-message .message-content {
+            background: #667eea;
+            color: white;
+        }
+
+        .confidence-badge {
+            font-size: 0.8rem;
+            color: #999;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 0.5rem;
+            padding: 1rem;
+            border-top: 1px solid #e0e0e0;
+            background: white;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .chat-input button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.8rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .chat-input button:hover {
+            background: #764ba2;
+        }
+
+        /* Women Safety Styles */
+        .safety-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .metric-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .metric-item i {
+            font-size: 1.3rem;
+            color: #667eea;
+        }
+
+        .infrastructure-scores {
+            background: #f9f9f9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+
+        .infrastructure-scores h4 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .score-item {
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .score-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+            min-width: 140px;
+        }
+
+        .score-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        .score-percent {
+            display: inline-block;
+            width: 45px;
+            text-align: right;
+            margin-left: 1rem;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .safety-recommendations {
+            background: #e8f5e9;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid #4caf50;
+        }
+
+        .safety-recommendations h4 {
+            color: #2e7d32;
+            margin-bottom: 1rem;
+        }
+
+        .safety-recommendations ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .safety-recommendations li {
+            margin-bottom: 0.8rem;
+            color: #333;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .safety-breakdown {
+            background: #fff3e0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #ff9800;
+        }
+
+        .safety-breakdown h4 {
+            color: #e65100;
+            margin-bottom: 1rem;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid #ffe0b2;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-value {
+            font-weight: bold;
+            color: #ff6f00;
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .tab-btn {
+                min-width: 100px;
+                font-size: 0.8rem;
+            }
+
+            .modal-tabs {
+                overflow-x: scroll;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-map-marked-alt"></i>
+                <h1>Destini Guide</h1>
+            </div>
+<nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#recommendations">Places</a></li>
+                    <li><a href="#about">About Us</a></li>
+                </ul>
+            </nav>
+            <div class="auth-container">
+                <div id="authButtons" class="auth-buttons">
+                    <button class="auth-button" id="loginSignupBtn">
+                        <i class="fas fa-user"></i> Login / Sign Up
+                    </button>
+                </div>
+                <div id="userInfo" class="user-info" style="display: none;">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <span style="color: white; font-weight: 600;" id="userName">User</span>
+                    <button class="logout-btn" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h2>Discover Amazing Places</h2>
+            
+            <div class="search-form">
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Current Location</label>
+                    <input type="text" id="presentLocation" placeholder="Enter your location">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-flag"></i> Destination</label>
+                    <input type="text" id="destinationLocation" placeholder="Enter destination">
+                </div>
+                <button class="btn-primary" id="searchBtn">
+                    <i class="fas fa-search"></i> Find Places
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Loading places...</p>
+    </div>
+
+    <!-- Recommendations -->
+    <section class="recommendations" id="recommendations">
+        <div class="container">
+            <h2 class="section-title">Top Places in <span id="destinationName"></span></h2>
+            <div class="ml-info">
+                <p>Powered by our ML recommendation engine. These places are ranked based on ratings, reviews, and your preferences.</p>
+            </div>
+            <div class="places-grid" id="placesGrid"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="recommendations about-section" id="about">
+        <div class="container">
+            <h2 class="section-title">About Us – Destini Guide</h2>
+            <div class="about-highlight">
+                <div class="about-tag"><i class="fas fa-compass"></i> About Us - Destini Guide</div>
+                <h3>Destini Guide is an intelligent travel-exploration platform designed to help you discover the best places around you with confidence, clarity, and convenience.</h3>
+                <p>Our mission is simple - make travel smarter, safer, and more personalized for everyone.</p>
+                <p>We combine the power of AI, real-time data, and smart recommendation systems to guide users toward the best destinations, whether they are planning a weekend getaway or exploring a new city.</p>
+                <p>At Destini Guide, we believe travel should be enjoyable and stress-free - which is why our platform brings everything you need into one place.</p>
+            </div>
+            <div class="ml-info" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">
+                <div class="stats-card">
+                    <h3>Vision</h3>
+                    <p>Make reliable destination research effortless for solo, family, and women travelers.</p>
+                </div>
+                <div class="stats-card">
+                    <h3>Key Highlights</h3>
+                    <p>Instant current-location directions, AI chat support, safety breakdowns, crowd charts, and weather cards.</p>
+                </div>
+                <div class="stats-card">
+                    <h3>Get Started</h3>
+                    <p>Allow location access, search a place, open the tabs, and tap Directions to navigate instantly.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal -->
+    <div class="modal" id="placeModal">
+        <div class="modal-content">
+            <button class="close" id="closeModal">×</button>
+            
+            <div class="modal-header">
+                <img id="placeImage" src="" alt="Place">
+                <div class="place-header-info">
+                    <h2 id="placeName"></h2>
+                    <p id="placeAddress"></p>
+                </div>
+            </div>
+
+            <div class="modal-tabs">
+                <button class="tab-btn active" data-tab="overview">
+                    <i class="fas fa-info-circle"></i> Overview
+                </button>
+                <button class="tab-btn" data-tab="safety">
+                    <i class="fas fa-shield-alt"></i> Women Safety
+                </button>
+                <button class="tab-btn" data-tab="crowd">
+                    <i class="fas fa-users"></i> Crowd Analysis
+                </button>
+                <button class="tab-btn" data-tab="weather">
+                    <i class="fas fa-cloud-sun"></i> Weather
+                </button>
+                <button class="tab-btn" data-tab="directions">
+                    <i class="fas fa-route"></i> Directions
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <!-- Overview -->
+                <div class="tab-pane active" id="overview">
+                    <h3>About This Place</h3>
+                    <p id="placeDescription"></p>
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <i class="fas fa-star"></i>
+                            <span>Rating: <strong id="placeRatingValue"></strong></span>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-users"></i>
+                            <span>Reviews: <strong id="placeReviewCount"></strong></span>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-phone"></i>
+                            <span>Phone: <strong id="placePhone"></strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Safety -->
+                <div class="tab-pane" id="safety">
+                    <h3>🛡️ Women Safety Index (WSI)</h3>
+                    
+                    <!-- Safety Gauge -->
+                    <div id="safetyGaugeContainer" style="margin: 2rem 0; text-align: center;">
+                        <div id="safetyGauge" style="max-width: 400px; margin: 0 auto;"></div>
+                        <div id="safetyStatus" style="margin-top: 1rem;"></div>
+                    </div>
+                    
+                    <div class="safety-metrics">
+                        <div class="metric-item">
+                            <i class="fas fa-star"></i>
+                            <span>Rating: <strong id="safetyRating">4.7/5</strong></span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Lighting: <strong id="safetyLighting">Excellent</strong></span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-camera"></i>
+                            <span>CCTV Coverage: <strong id="safetyCCTV">High</strong></span>
+                        </div>
+                        <div class="metric-item">
+                            <i class="fas fa-bus"></i>
+                            <span>Transit: <strong id="safetyTransit">Available</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div class="infrastructure-scores">
+                        <h4>Infrastructure Analysis</h4>
+                        <div class="score-item">
+                            <span class="score-label">Street Lighting</span>
+                            <div class="score-bar">
+                                <div class="score-fill" id="lightingScore" style="width: 85%;"></div>
+                            </div>
+                            <span class="score-percent">85%</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Transit Accessibility</span>
+                            <div class="score-bar">
+                                <div class="score-fill" id="transitScore" style="width: 70%;"></div>
+                            </div>
+                            <span class="score-percent">70%</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">Walkability</span>
+                            <div class="score-bar">
+                                <div class="score-fill" id="walkabilityScore" style="width: 75%;"></div>
+                            </div>
+                            <span class="score-percent">75%</span>
+                        </div>
+                        <div class="score-item">
+                            <span class="score-label">CCTV Coverage</span>
+                            <div class="score-bar">
+                                <div class="score-fill" id="cctvScore" style="width: 65%;"></div>
+                            </div>
+                            <span class="score-percent">65%</span>
+                        </div>
+                    </div>
+                    
+                    <div class="safety-recommendations">
+                        <h4><i class="fas fa-shield-alt"></i> Safety Tips</h4>
+                        <ul id="safetyTips">
+                            <li>✅ Generally safe during day and night</li>
+                            <li>✅ Well-lit streets with good CCTV coverage</li>
+                            <li>✅ Good public transport available</li>
+                            <li>⚠️ Stay aware of surroundings</li>
+                            <li>✅ Friendly and populated area</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="safety-breakdown">
+                        <h4>Safety Score Breakdown</h4>
+                        <div class="breakdown-item">
+                            <span>Google Reviews Analysis</span>
+                            <span class="breakdown-value">65%</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Infrastructure</span>
+                            <span class="breakdown-value">20%</span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Regional Context</span>
+                            <span class="breakdown-value">15%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Google Reviews Section -->
+                    <div style="margin-top: 3rem;">
+                        <h4 style="margin-bottom: 1rem; color: #333;">
+                            <i class="fas fa-star"></i> Google Maps Reviews
+                        </h4>
+                        <div id="googleReviewsContainer" style="max-height: 400px; overflow-y: auto;">
+                            <p style="text-align: center; color: #666; padding: 2rem;">
+                                Loading reviews from Google Maps...
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Crowd Analysis Tab -->
+                <div class="tab-pane" id="crowd">
+                    <h3>👥 Crowd Analysis</h3>
+                    
+                    <!-- Current Crowd Gauge -->
+                    <div id="crowdGaugeContainer" style="margin: 2rem 0;">
+                        <div id="crowdGauge" style="max-width: 650px; margin: 0 auto;"></div>
+                    </div>
+
+                    <!-- Crowd Pattern Chart -->
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px; margin: 2rem 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin-bottom: 1rem; color: #333;">
+                            <i class="fas fa-chart-line"></i> Crowd Level Throughout the Day
+                        </h4>
+                        <div id="crowdChart"></div>
+                    </div>
+
+                    <!-- Best Times to Visit -->
+                    <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; border-left: 4px solid #4caf50;">
+                        <h4 style="color: #2e7d32; margin-bottom: 1rem;">
+                            <i class="fas fa-lightbulb"></i> Best Times to Visit
+                        </h4>
+                        <ul id="crowdTips" style="list-style: none; padding: 0; margin: 0;">
+                            <li style="margin-bottom: 0.8rem; padding-left: 1.5rem; position: relative;">
+                                ✅ Visit early morning (6–9 AM) for fewer crowds
+                            </li>
+                            <li style="margin-bottom: 0.8rem; padding-left: 1.5rem; position: relative;">
+                                ✅ Weekdays are generally less crowded
+                            </li>
+                            <li style="margin-bottom: 0.8rem; padding-left: 1.5rem; position: relative;">
+                                ✅ Avoid weekends and public holidays
+                            </li>
+                            <li style="margin-bottom: 0.8rem; padding-left: 1.5rem; position: relative;">
+                                ✅ Evening hours (after 7 PM) see moderate crowds
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Weather Tab -->
+                <div class="tab-pane" id="weather">
+                    <h3>🌤️ Weather Forecast</h3>
+                    
+                    <!-- Current Weather Card -->
+                    <div id="currentWeather" style="
+                        background: linear-gradient(180deg, #6fb1fc, #4364f7);
+                        padding: 2.5rem;
+                        border-radius: 15px;
+                        text-align: center;
+                        color: white;
+                        margin: 2rem 0;
+                        box-shadow: 0 4px 15px rgba(67, 100, 247, 0.3);
+                    ">
+                        <div style="font-size: 3.5rem; font-weight: bold; margin-bottom: 0.5rem;" id="weatherTemp">
+                            Loading...
+                        </div>
+                        <div style="font-size: 1.5rem; margin-bottom: 1rem;" id="weatherDesc">
+                            Fetching weather data...
+                        </div>
+                        <div style="font-size: 1rem; opacity: 0.9;" id="weatherDetails">
+                            💧 Humidity: -- % &nbsp;&nbsp; 💨 Wind: -- km/h
+                        </div>
+                    </div>
+
+                    <!-- 5-Day Forecast -->
+                    <div style="background: white; padding: 1.5rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                        <h4 style="margin-bottom: 1.5rem; color: #333;">
+                            <i class="fas fa-calendar-alt"></i> 5-Day Forecast
+                        </h4>
+                        <div id="weatherForecast" style="
+                            display: grid;
+                            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                            gap: 1rem;
+                        ">
+                            <!-- Forecast cards will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Directions -->
+                <div class="tab-pane" id="directions">
+                    <h3>Get Directions</h3>
+                    <div class="search-form" style="margin-top: 1rem;">
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> From</label>
+                            <input type="text" id="directionsFrom" placeholder="Starting point">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-map-pin"></i> To</label>
+                            <input type="text" id="directionsTo" readonly>
+                        </div>
+                        <button class="btn-primary" id="getDirectionsBtn">
+                            <i class="fas fa-route"></i> Get Directions
+                        </button>
+                    </div>
+                    <a href="#" id="openMapsLink" target="_blank" class="btn-primary" style="display: inline-block; margin-top: 1rem;">
+                        <i class="fas fa-external-link-alt"></i> Open in Google Maps
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Destini Guide</p>
+    </footer>
+
+<!-- Auth Modal -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-modal-content">
+            <div class="auth-modal-header">
+                <h2><i class="fas fa-user-circle"></i> Welcome to Destini Guide</h2>
+                <button class="auth-close" id="authClose">×</button>
+            </div>
+            <div class="auth-tabs">
+                <button class="auth-tab-btn active" data-auth-tab="login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="auth-tab-btn" data-auth-tab="signup">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+            <div class="auth-forms">
+                <!-- Login Form -->
+                <form class="auth-form active" id="loginForm">
+                    <div class="auth-error" id="loginError"></div>
+                    <div class="auth-form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="auth-form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit" class="auth-submit-btn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </form>
+
+                <!-- Signup Form -->
+                <form class="auth-form" id="signupForm">
+                    <div class="auth-error" id="signupError"></div>
+                    <div class="auth-success" id="signupSuccess"></div>
+                    <div class="auth-form-group">
+                        <label><i class="fas fa-user"></i> Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name" required>
+                    </div>
+                    <div class="auth-form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="auth-form-group">
+                        <label><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password (min 6 characters)" required>
+                    </div>
+                    <div class="auth-form-group">
+                        <label><i class="fas fa-lock"></i> Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+                    </div>
+                    <button type="submit" class="auth-submit-btn">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating AI Chatbot -->
+    <div class="chatbot-float">
+        <!-- Chatbot Popup -->
+        <div class="chatbot-popup" id="chatbotPopup">
+            <div class="chatbot-header">
+                <h3>
+                    <i class="fas fa-robot"></i> AI Travel Assistant
+                </h3>
+                <button class="chatbot-close" id="chatbotClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="chatbot-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-content">
+                            <i class="fas fa-robot"></i> Hello! I'm your AI travel assistant. Ask me anything about travel destinations, places, weather, crowd levels, or get recommendations!
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input">
+                    <input type="text" id="chatInput" placeholder="Ask about places, weather, crowds...">
+                    <button id="sendChatBtn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+        <!-- Chatbot Button -->
+        <button class="chatbot-button" id="chatbotButton">
+            <i class="fas fa-comments"></i>
+        </button>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="frontend.js"></script>
+</body>
+</html>
